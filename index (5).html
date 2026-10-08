@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#00283F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Patient Experience">
+<meta name="description" content="Patient Experience Diagnostic prototype by Gap International">
+<title>Patient Experience Diagnostic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#003B5C; --night:#00283F; --ink:#14232E; --muted:#4A5863; --ground:#F3F5F4;
+  --gold:#8A6420; --gold-lt:#E0B15E; --teal:#1E7A6E; --teal-lt:#4FC3B1;
+  --coral:#A8443B; --coral-lt:#F08A7E; --sky-lt:#8FC1E3; --mint:#9FD9CF;
+  --serif:'Newsreader', Georgia, serif; --sans:'DM Sans', system-ui, sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--night);font-family:var(--sans);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+#app{max-width:440px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;position:relative;overflow:hidden;transition:background .4s ease}
+@media (min-width:600px){
+  body{display:flex;align-items:center;justify-content:center;padding:24px}
+  #app{width:400px;min-height:0;height:min(860px,calc(100vh - 48px));border-radius:40px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+}
+.screen{flex:1;display:flex;flex-direction:column;gap:20px;padding:calc(env(safe-area-inset-top) + 14px) 26px calc(env(safe-area-inset-bottom) + 26px);overflow-y:auto;animation:rise .45s ease-out both}
+.screen.flush{padding:calc(env(safe-area-inset-top) + 14px) 0 0;gap:0}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes drift{to{transform:rotate(360deg)}}
+@keyframes breathe{0%,100%{opacity:.5}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.screen,.rings,.glow{animation:none!important}}
+p,h1,h2{margin:0}
+.bar{display:flex;align-items:center;justify-content:space-between;min-height:48px}
+.flush .bar{padding:0 20px}
+.iconbtn{width:44px;height:44px;margin-left:-10px;border:0;background:none;color:inherit;display:grid;place-items:center;cursor:pointer;border-radius:22px}
+.iconbtn:focus-visible,.btn:focus-visible,.chip:focus-visible,.dotbtn:focus-visible{outline:3px solid var(--mint);outline-offset:2px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:2.2px;text-transform:uppercase}
+.display{font-family:var(--serif);font-weight:300;line-height:1.08;letter-spacing:-.3px}
+.it{font-style:italic}
+.lead{font-size:17px;line-height:1.5}
+.small{font-size:14px;line-height:1.5}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:58px;border-radius:29px;border:0;font:700 17px var(--sans);cursor:pointer;text-decoration:none;flex-shrink:0}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-white{background:#fff;color:var(--night)}
+.btn-outline{background:transparent;color:#fff;border:1.5px solid #fff}
+.mt-auto{margin-top:auto}
+.card{background:#fff;border-radius:20px;padding:20px}
+.dark{background:var(--night);color:#fff}
+.light{background:var(--ground);color:var(--ink)}
+/* opening */
+.hero-rings{position:absolute;left:50%;top:70px;width:390px;margin-left:-195px;pointer-events:none}
+.rings{animation:drift 60s linear infinite;transform-origin:195px 150px}
+.glow{animation:breathe 6s ease-in-out infinite}
+.begin{justify-content:space-between;padding:0 8px 0 28px}
+.begin span{display:grid;place-items:center;width:44px;height:44px;border-radius:22px;background:var(--night);color:#fff}
+/* why */
+.duo{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.duo .node{display:flex;flex-direction:column;align-items:center;gap:10px;flex:1}
+.duo .ring{display:grid;place-items:center;width:84px;height:84px;border-radius:50%;border:10px solid;font:italic 300 16px var(--serif)}
+.duo .lbl{font-size:13px;font-weight:700;text-align:center;line-height:1.3}
+.proof{background:var(--navy);color:#fff;border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:8px}
+/* journey */
+.path{display:flex;flex-direction:column}
+.stop{display:flex;gap:16px}
+.stop .rail{display:flex;flex-direction:column;align-items:center;width:40px;flex-shrink:0}
+.stop .num{display:grid;place-items:center;width:40px;height:40px;border-radius:20px;color:#fff;font:400 18px var(--serif)}
+.stop .line{width:2px;flex:1;background:#D3D9DC}
+.stop .txt{display:flex;flex-direction:column;gap:3px;padding:8px 0 18px}
+.stop .txt b{font-size:17px}
+.stop .txt span{font-size:14px;color:var(--muted)}
+/* about */
+label.q,.q{font-size:15px;font-weight:700;color:var(--navy)}
+select{height:52px;border-radius:14px;border:1px solid #C9D3D7;background:#fff;padding:0 14px;font:16px var(--sans);color:var(--ink);width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.chip{min-height:44px;padding:0 16px;border-radius:22px;border:1px solid #C9D3D7;background:#fff;color:var(--ink);font:500 15px var(--sans);cursor:pointer}
+.chips.grid4 .chip{border-radius:14px;padding:0}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:700}
+.field{display:flex;flex-direction:column;gap:10px}
+/* survey */
+.ghostnum{font:300 150px/1 var(--serif);opacity:.22}
+.statement{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:12px 28px 24px;color:#fff;animation:rise .4s ease-out both}
+.statement h1{font:300 32px/1.22 var(--serif)}
+.sheet{background:#fff;border-radius:28px 28px 0 0;padding:24px 20px calc(env(safe-area-inset-bottom) + 28px);display:flex;flex-direction:column;gap:16px}
+.picklabel{text-align:center;font:italic 400 28px var(--serif);min-height:34px}
+.dots{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-items:center}
+.dotbtn{height:58px;border:0;background:none;display:grid;place-items:center;cursor:pointer;padding:0;border-radius:12px}
+.dotbtn i{display:block;border-radius:50%;background:#E3E9EC;transition:transform .2s ease,background .2s ease,box-shadow .2s ease}
+.dotbtn:hover i{transform:scale(1.12)}
+.ends{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);padding:0 8px}
+.quote{font:400 96px/.6 var(--serif);height:48px}
+.lensbar{display:flex;gap:6px}
+.lensbar span{height:6px;flex:1;border-radius:3px;background:#D3D9DC}
+/* mirror */
+.mirror{display:flex;align-items:center;gap:14px}
+.legend{display:flex;flex-direction:column;gap:10px;flex:1}
+.legend div{display:flex;align-items:center;gap:8px}
+.legend i{width:10px;height:10px;border-radius:5px;flex-shrink:0}
+.legend span{font-size:14px;flex:1;color:#C7D7DE}
+.legend b{font-size:15px}
+textarea{border-radius:14px;border:1px solid #2A5A78;background:#0B3A55;color:#fff;padding:12px 14px;font:15px var(--sans);resize:none;min-height:76px;width:100%}
+textarea::placeholder{color:#8FAAB8}
+/* vision */
+.vision p{font:300 56px/1.02 var(--serif)}
+.steps4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.steps4 div{display:flex;flex-direction:column;gap:8px}
+.steps4 span{height:4px;border-radius:2px}
+.steps4 p{font-size:13px;line-height:1.35;color:#C7D7DE}
+.foot{font-size:12px;color:#8FAAB8;text-align:center}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<main id="app" aria-live="polite"></main>
+<script>
+(function(){
+'use strict';
+const ORG = 'Maple Ridge Health';
+const SCALE = ['Never','Rarely','Sometimes','Often','Almost always','Always'];
+const ROLES = ['Physician or provider','Nurse or clinical staff','Front desk or scheduling','Practice leader','Other'];
+const YEARS = ['<1','1–3','4–10','10+'];
+const PRACTICES = ['Primary Care · Downtown','Cardiology · North Campus','Pediatrics · Riverside','Women’s Health · West End','Orthopedics · Lakeview'];
+const LENSES = [
+ {key:'C',title:'Your work',color:'#8A6420',ring:'#E0B15E',neg:false,
+  blurb:'What your work means to you',
+  prompt:'Think back to why you chose a life in healthcare.',
+  pause:'When work feels like more than a job, patients can feel it in the room.',
+  note:'Purpose is the quietest part of care, and one of the most contagious.',
+  items:['I believe that the work I do is important.','I feel that my work is more than just a job.','I make a unique difference at work.','It is clear how my efforts further {org}’s goals.','I see how my work makes things better for people.','What I personally do matters to {org}’s overall success.','My work is exhilarating.']},
+ {key:'D',title:'Your team',color:'#1E7A6E',ring:'#4FC3B1',neg:true,
+  blurb:'How you see the people beside you',
+  prompt:'Picture the people beside you on your busiest day.',
+  pause:'Patients experience a team before they meet any one person on it.',
+  note:'Press Ganey’s research names how well care teams work together as the strongest driver of how patients rate their care.',
+  items:['I have to work hard to make up for others who don’t do their fair share.','I think my co-workers need to take their jobs more seriously.','I feel that people at work need to figure out how to be more self-reliant.','My co-workers get upset for no reason.','People at work are disorganized.']},
+ {key:'B',title:'Your patients',color:'#A8443B',ring:'#F08A7E',neg:true,
+  blurb:'How you see the people you care for',
+  prompt:'Picture the last patient who tested your patience.',
+  pause:'How we see a patient shows up in the smallest moments: a pause at the door, a name remembered.',
+  note:'Most people are already as caring as they know how to be. A new way of seeing makes new actions possible.',
+  items:['Patients nag {org} employees.','Patients make unreasonable requests of {org} employees.','Patients are rude.','Patients are demanding.','Patients disrupt what {org} employees are doing.']},
+ {key:'A',title:'Their experience',color:'#003B5C',ring:'#8FC1E3',neg:false,
+  blurb:'How patients are served across the organization',
+  prompt:'Now step into the patient’s shoes.',
+  pause:'People forget what you said and what you did. They never forget how you made them feel.',
+  note:'After Maya Angelou. Patient experience is not a score to chase. It is how people are left.',
+  items:['{org} employees provide patients with personalized service.','{org} employee recommendations to patients are made with the patient’s best interest in mind.','{org} employees disclose everything they think patients should know.','{org} employees are proactive in suggesting new offerings to patients.','{org} employees see the broader impact of their work with patients.','Patients can easily reach a {org} employee.','Patients’ circumstances are considered before recommendations are given.','Patient complaints are addressed by {org} employees.','Patients seek {org} employees’ advice.']}
+];
+const fill = t => t.split('{org}').join(ORG);
+const STEPS = [];
+LENSES.forEach((L, li) => {
+  STEPS.push({type:'intro', li});
+  L.items.forEach((_, ii) => STEPS.push({type:'item', li, ii, id:L.key + ii}));
+  STEPS.push({type:'pause', li});
+});
+const TOTAL = STEPS.filter(s => s.type === 'item').length;
+
+const KEY = 'ped-prototype-v1';
+const fresh = () => ({screen:'opening', step:0, answers:{}, role:1, years:1, practice:0, reflection:''});
+let S = fresh();
+try { const saved = JSON.parse(localStorage.getItem(KEY)); if (saved && saved.answers) S = Object.assign(fresh(), saved); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+const app = document.getElementById('app');
+const icon = {
+  back:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>',
+  arrow:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  long:'<svg width="40" height="24" viewBox="0 0 40 24" fill="none" stroke="#5E6A73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12h34M28 4l8 8-8 8"/></svg>'
+};
+const backBtn = (act, arg) => `<button class="iconbtn" data-act="${act}"${arg ? ` data-arg="${arg}"` : ''} aria-label="Back">${icon.back}</button>`;
+const answered = () => Object.keys(S.answers).length;
+function progressRing(onDark, color){
+  const C = 2 * Math.PI * 14, p = answered() / TOTAL;
+  return `<svg width="36" height="36" viewBox="0 0 36 36" role="img" aria-label="${answered()} of ${TOTAL} answered"><circle cx="18" cy="18" r="14" fill="none" stroke="${onDark ? 'rgba(255,255,255,.25)' : '#DCE3E6'}" stroke-width="4"/><circle cx="18" cy="18" r="14" fill="none" stroke="${onDark ? '#fff' : color}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${(C * p).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 18 18)"/></svg>`;
+}
+const bg = c => { app.style.background = c; document.querySelector('meta[name=theme-color]').setAttribute('content', c); };
+
+const VIEWS = {
+opening(){
+  bg('#00283F');
+  return `<section class="screen dark" style="position:relative">
+  <p style="font-size:14px;font-weight:700;color:#D9EEEA">Gap International</p>
+  <svg class="hero-rings" viewBox="0 0 390 300" aria-hidden="true"><g class="rings">
+   <circle cx="150" cy="150" r="86" fill="none" stroke="#B8862F" stroke-width="20" stroke-dasharray="380 160" stroke-linecap="round"/>
+   <circle cx="240" cy="150" r="86" fill="none" stroke="#279989" stroke-width="20" stroke-dasharray="380 160" stroke-dashoffset="270" stroke-linecap="round"/></g>
+   <circle class="glow" cx="195" cy="150" r="6" fill="#fff"/></svg>
+  <div class="mt-auto" style="display:flex;flex-direction:column;gap:18px;padding-top:300px">
+   <p class="eyebrow" style="color:var(--mint)">The Patient Experience Diagnostic</p>
+   <h1 class="display" style="font-size:46px">What if every patient left feeling <span class="it" style="color:#E8C27A">seen?</span></h1>
+   <p class="lead" style="color:#C7D7DE">This is a short journey into what shapes that feeling. It begins with you.</p>
+   <p class="small" style="color:#8FAAB8">4 lenses · 26 statements · about 8 minutes · confidential</p>
+  </div>
+  <button class="btn btn-white begin" data-act="go" data-arg="why">${answered() ? 'Continue where you left off' : 'Begin'}<span>${icon.arrow}</span></button>
+  </section>`;
+},
+why(){
+  bg('#F3F5F4');
+  return `<section class="screen light">
+  <div class="bar">${backBtn('go','opening')}<p class="eyebrow" style="color:#0F6E56">Why this exists</p><span style="width:34px"></span></div>
+  <h1 class="display" style="font-size:34px;color:var(--navy)">Most surveys ask how the appointment went. <span class="it" style="color:var(--gold)">This one uncovers what created it.</span></h1>
+  <div class="card duo">
+   <div class="node"><span class="ring" style="border-color:#B8862F;color:var(--gold)">you</span><span class="lbl">How we think about our work and each other</span></div>
+   ${icon.long}
+   <div class="node"><span class="ring" style="border-color:#279989;color:var(--teal)">them</span><span class="lbl">What every patient experiences</span></div>
+  </div>
+  <p style="font-size:16px;line-height:1.55;color:#3A4853">How caregivers think about patients becomes how patients feel. When the job comes first, patients feel like part of the job. This diagnostic shows which mindset is at work, so you can change the experience at its source.</p>
+  <div class="proof">
+   <p class="eyebrow" style="color:var(--mint)">What it made possible</p>
+   <p class="display" style="font-size:44px;line-height:1">27th <span style="color:#E8C27A">→</span> 92nd</p>
+   <p class="small" style="color:#C7D7DE">Patient satisfaction percentile across 55 Penn Medicine practices after shifting this mindset.</p>
+  </div>
+  <button class="btn btn-navy mt-auto" data-act="go" data-arg="journey">See the journey</button>
+  </section>`;
+},
+journey(){
+  bg('#F3F5F4');
+  const stops = LENSES.map((L, i) => `<div class="stop"><div class="rail"><span class="num" style="background:${L.color}">${i + 1}</span>${i < 3 ? '<span class="line"></span>' : ''}</div><div class="txt"><b>${L.title}</b><span>${L.blurb} · ${L.items.length} statements</span></div></div>`).join('');
+  return `<section class="screen light">
+  <div class="bar">${backBtn('go','why')}<p class="eyebrow" style="color:#0F6E56">The journey ahead</p><span style="width:34px"></span></div>
+  <h1 class="display" style="font-size:33px;color:var(--navy)">Four lenses, moving <span class="it">outward</span> from you to your patients</h1>
+  <div class="path">${stops}</div>
+  <div class="card" style="display:flex;flex-direction:column;gap:6px;padding:18px 20px">
+   <p style="font-size:15px;font-weight:700;color:var(--navy)">One tap per statement</p>
+   <p class="small" style="color:var(--muted)">Choose how often it is true, from Never to Always. Go with your first instinct. At the end, you will see a private reflection of your own mindset.</p>
+  </div>
+  <button class="btn btn-navy mt-auto" data-act="go" data-arg="about">I’m ready</button>
+  </section>`;
+},
+about(){
+  bg('#F3F5F4');
+  return `<section class="screen light">
+  <div class="bar">${backBtn('go','journey')}<p class="eyebrow" style="color:#0F6E56">About you</p><span style="width:34px"></span></div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+   <h1 class="display" style="font-size:33px;color:var(--navy)">Where do you <span class="it">stand</span> in the care of patients?</h1>
+   <p class="small" style="color:var(--muted);font-size:15px">Used only to combine answers by group. Small groups are never reported on their own.</p>
+  </div>
+  <div class="field"><label class="q" for="practice">Practice or location</label>
+   <select id="practice">${PRACTICES.map((p, i) => `<option value="${i}"${S.practice === i ? ' selected' : ''}>${p}</option>`).join('')}</select></div>
+  <div class="field"><p class="q" id="rl">Your role</p>
+   <div class="chips" role="group" aria-labelledby="rl">${ROLES.map((r, i) => `<button class="chip${S.role === i ? ' on' : ''}" aria-pressed="${S.role === i}" data-act="role" data-arg="${i}">${r}</button>`).join('')}</div></div>
+  <div class="field"><p class="q" id="yl">Years with the organization</p>
+   <div class="chips grid4" role="group" aria-labelledby="yl">${YEARS.map((y, i) => `<button class="chip${S.years === i ? ' on' : ''}" aria-pressed="${S.years === i}" data-act="years" data-arg="${i}">${y.replace('<','&lt;')}</button>`).join('')}</div></div>
+  <button class="btn btn-navy mt-auto" data-act="go" data-arg="survey">Enter the first lens</button>
+  </section>`;
+},
+survey(){
+  const cur = STEPS[S.step], L = LENSES[cur.li];
+  if (cur.type === 'pause') {
+    bg('#F3F5F4');
+    const last = cur.li === LENSES.length - 1;
+    return `<section class="screen light">
+    <div class="bar">${backBtn('back')}<p class="eyebrow" style="color:${L.color}">Lens ${cur.li + 1} · ${L.title}</p>${progressRing(false, L.color)}</div>
+    <p class="quote" style="color:${L.color}" aria-hidden="true">“</p>
+    <p class="eyebrow" style="color:${L.color}">A moment to consider</p>
+    <h1 class="display" style="font-size:31px;line-height:1.22;color:var(--ink)">${L.pause}</h1>
+    <p class="small" style="color:var(--muted)">${L.note}</p>
+    <div class="lensbar mt-auto">${LENSES.map((x, i) => `<span style="${i <= cur.li ? 'background:' + x.color : ''}"></span>`).join('')}</div>
+    <button class="btn" style="background:${L.color};color:#fff" data-act="next">${last ? 'See your reflection' : 'Next lens'}</button>
+    </section>`;
+  }
+  bg(L.color);
+  const bar = `<div class="bar" style="color:#fff">${backBtn('back')}<p class="eyebrow">Lens ${cur.li + 1} · ${L.title}</p>${progressRing(true)}</div>`;
+  if (cur.type === 'intro') {
+    return `<section class="screen" style="color:#fff">${bar}
+    <p class="ghostnum" aria-hidden="true">0${cur.li + 1}</p>
+    <div class="mt-auto" style="display:flex;flex-direction:column;gap:16px">
+     <p class="eyebrow" style="opacity:.85">Lens ${cur.li + 1} of 4</p>
+     <h1 class="display" style="font-size:54px;line-height:1">${L.title}</h1>
+     <p style="font:italic 300 24px/1.3 var(--serif)">${L.prompt}</p>
+     <p class="small" style="opacity:.85">${L.items.length} statements</p>
+    </div>
+    <button class="btn btn-white" style="color:${L.color};margin-top:12px" data-act="next">Step in</button>
+    </section>`;
+  }
+  const sel = S.answers[cur.id];
+  const dots = SCALE.map((label, k) => {
+    const size = 16 + k * 4, on = sel === k;
+    const style = `width:${size}px;height:${size}px;${on ? `background:${L.color};box-shadow:0 0 0 5px ${L.ring}55;transform:scale(1.08)` : ''}`;
+    return `<button class="dotbtn" data-act="pick" data-arg="${k}" aria-label="${label}" aria-pressed="${on}"><i style="${style}"></i></button>`;
+  }).join('');
+  return `<section class="screen flush" style="color:#fff">${bar}
+  <div class="statement" key="${cur.id}">
+   <p class="small" style="opacity:.85">${cur.ii + 1} of ${L.items.length}</p>
+   <h1>${fill(L.items[cur.ii])}</h1>
+  </div>
+  <div class="sheet">
+   <p class="picklabel" style="color:${sel === undefined ? '#6E7C86' : L.color}">${sel === undefined ? 'How often is this true?' : SCALE[sel]}</p>
+   <div class="dots" role="group" aria-label="How often is this true?">${dots}</div>
+   <div class="ends" aria-hidden="true"><span>Never</span><span>Always</span></div>
+  </div>
+  </section>`;
+},
+mirror(){
+  bg('#00283F');
+  const rings = LENSES.map((L, i) => {
+    const vals = Object.keys(S.answers).filter(id => id.charAt(0) === L.key).map(id => (L.neg ? 5 - S.answers[id] : S.answers[id]) / 5);
+    const p = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+    const r = 112 - i * 26, C = 2 * Math.PI * r;
+    return {L, p, r, C};
+  });
+  const sorted = rings.slice().sort((a, b) => b.p - a.p);
+  const insight = answered()
+    ? `Your strongest lens is <span class="it" style="color:${sorted[0].L.ring}">${sorted[0].L.title.toLowerCase()}</span>. The one with the most room to grow is <span class="it" style="color:${sorted[3].L.ring}">${sorted[3].L.title.toLowerCase()}</span>.`
+    : 'Answer a few statements to see your reflection take shape.';
+  const svg = rings.map(x => `<circle cx="130" cy="130" r="${x.r}" fill="none" stroke="${x.L.ring}" stroke-opacity=".22" stroke-width="18"/><circle cx="130" cy="130" r="${x.r}" fill="none" stroke="${x.L.ring}" stroke-width="18" stroke-linecap="round" stroke-dasharray="${(x.C * Math.max(x.p, .02)).toFixed(1)} ${x.C.toFixed(1)}" transform="rotate(-90 130 130)"/>`).join('');
+  return `<section class="screen dark" style="gap:16px">
+  <div class="bar">${backBtn('back')}<p class="eyebrow" style="color:var(--mint)">Complete</p>${progressRing(true)}</div>
+  <p class="eyebrow" style="color:var(--mint)">Your reflection · only you see this</p>
+  <h1 class="display" style="font-size:34px">Your experience <span class="it" style="color:#E8C27A">mindset</span></h1>
+  <div class="mirror">
+   <svg width="160" height="160" viewBox="0 0 260 260" role="img" aria-label="Your reflection across four lenses">${svg}</svg>
+   <div class="legend">${rings.map(x => `<div><i style="background:${x.L.ring}"></i><span>${x.L.title}</span><b>${Math.round(x.p * 100)}%</b></div>`).join('')}</div>
+  </div>
+  <p style="font:300 20px/1.35 var(--serif);color:#EAF1F4">${insight}</p>
+  <label for="refl" class="small" style="font-weight:700;color:var(--mint)">Think of one patient you saw this week. How did they leave feeling?</label>
+  <textarea id="refl" placeholder="A few words, just for you"></textarea>
+  <button class="btn btn-white mt-auto" data-act="go" data-arg="vision">Share my responses</button>
+  </section>`;
+},
+vision(){
+  bg('#00283F');
+  const cols = [['#E0B15E','Answers combine by practice'],['#4FC3B1','Leaders see the mindset'],['#F08A7E','Teams redesign touchpoints'],['#8FC1E3','We reflect again in six months']];
+  return `<section class="screen dark" style="gap:24px;padding-top:calc(env(safe-area-inset-top) + 56px)">
+  <p class="eyebrow" style="color:var(--mint)">Thank you</p>
+  <p class="lead" style="color:#C7D7DE">Your voice is now part of something larger. Imagine a place where every patient leaves feeling</p>
+  <div class="vision"><p style="color:#E0B15E">Known.</p><p style="color:#4FC3B1">Cared for.</p><p class="it">Amazed.</p></div>
+  <div style="display:flex;flex-direction:column;gap:14px;border-top:1px solid #1F4A64;padding-top:22px">
+   <p class="eyebrow" style="color:var(--mint)">What happens next</p>
+   <div class="steps4">${cols.map(c => `<div><span style="background:${c[0]}"></span><p>${c[1]}</p></div>`).join('')}</div>
+  </div>
+  <button class="btn btn-outline mt-auto" data-act="restart">Start over</button>
+  <p class="foot">Prototype · Gap International Diagnostics · Sample data only</p>
+  </section>`;
+}
+};
+
+let timer = null;
+function render(){
+  app.innerHTML = VIEWS[S.screen]();
+  const t = document.getElementById('refl');
+  if (t) { t.value = S.reflection; t.addEventListener('input', e => { S.reflection = e.target.value; save(); }); }
+  const sel = document.getElementById('practice');
+  if (sel) sel.addEventListener('change', e => { S.practice = +e.target.value; save(); });
+  save();
+}
+function go(screen){ clearTimeout(timer); S.screen = screen; render(); window.scrollTo(0, 0); }
+const ACT = {
+  go: arg => go(arg),
+  next(){
+    if (S.step >= STEPS.length - 1) return go('mirror');
+    S.step++; go('survey');
+  },
+  back(){
+    if (S.screen === 'mirror') { S.step = STEPS.length - 1; return go('survey'); }
+    if (S.step === 0) return go('about');
+    S.step--; go('survey');
+  },
+  pick(arg){
+    const cur = STEPS[S.step];
+    S.answers[cur.id] = +arg; render();
+    clearTimeout(timer);
+    timer = setTimeout(() => ACT.next(), 420);
+  },
+  role: arg => { S.role = +arg; render(); },
+  years: arg => { S.years = +arg; render(); },
+  restart(){ S = fresh(); go('opening'); }
+};
+app.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]');
+  if (b && ACT[b.dataset.act]) ACT[b.dataset.act](b.dataset.arg);
+});
+render();
+})();
+</script>
+</body>
+</html>
