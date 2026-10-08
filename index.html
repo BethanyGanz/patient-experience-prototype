@@ -28,7 +28,7 @@ body{background:var(--night);font-family:var(--sans);-webkit-font-smoothing:anti
   #app{width:400px;min-height:0;height:min(860px,calc(100vh - 48px));border-radius:40px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
 }
 .screen{flex:1;display:flex;flex-direction:column;gap:20px;padding:calc(env(safe-area-inset-top) + 14px) 26px calc(env(safe-area-inset-bottom) + 26px);overflow-y:auto;animation:rise .45s ease-out both}
-.screen.flush{padding:calc(env(safe-area-inset-top) + 14px) 0 0;gap:0}
+.screen.flush{padding:calc(env(safe-area-inset-top) + 14px) 0 0;gap:0;animation:none}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes drift{to{transform:rotate(360deg)}}
 @keyframes breathe{0%,100%{opacity:.5}50%{opacity:1}}
@@ -288,7 +288,7 @@ survey(){
    <h1>${fill(L.items[cur.ii])}</h1>
   </div>
   <div class="sheet">
-   <p class="picklabel" style="color:${sel === undefined ? '#6E7C86' : L.color}">${sel === undefined ? 'How often is this true?' : SCALE[sel]}</p>
+   <p class="picklabel" id="picklabel" style="color:${sel === undefined ? '#6E7C86' : L.color}">${sel === undefined ? 'How often is this true?' : SCALE[sel]}</p>
    <div class="dots" role="group" aria-label="How often is this true?">${dots}</div>
    <div class="ends" aria-hidden="true"><span>Never</span><span>Always</span></div>
   </div>
@@ -360,8 +360,15 @@ const ACT = {
     S.step--; go('survey');
   },
   pick(arg){
-    const cur = STEPS[S.step];
-    S.answers[cur.id] = +arg; render();
+    const cur = STEPS[S.step], L = LENSES[cur.li], k = +arg;
+    S.answers[cur.id] = k; save();
+    app.querySelectorAll('.dotbtn').forEach((b, i) => {
+      const on = i === k, size = 16 + i * 4, dot = b.querySelector('i');
+      b.setAttribute('aria-pressed', on);
+      dot.style.cssText = `width:${size}px;height:${size}px;${on ? `background:${L.color};box-shadow:0 0 0 5px ${L.ring}55;transform:scale(1.08)` : ''}`;
+    });
+    const lbl = document.getElementById('picklabel');
+    if (lbl) { lbl.textContent = SCALE[k]; lbl.style.color = L.color; }
     clearTimeout(timer);
     timer = setTimeout(() => ACT.next(), 420);
   },
